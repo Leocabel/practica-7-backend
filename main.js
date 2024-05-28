@@ -5,10 +5,12 @@
 
 // forma actual con ECMAScript 6 de llamar librerias
 import express from 'express'
-
+import bodyParser from 'body-parser'
 
 const app = express()
 const port = 3000
+
+app.use(bodyParser.json())
 
 // ---------------- Endpoint -------------------
 // con 'get' le indicamos que nuestra API acepta
@@ -21,6 +23,8 @@ const port = 3000
 // - req: request o la peticion
 // - res: response o la respuesta
 app.get('/api/v1/usuarios', (req, res) => {
+
+    console.log(req.query)
     // const respuesta = {
     //     mensaje: "hola"
     // }
