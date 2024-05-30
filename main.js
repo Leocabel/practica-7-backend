@@ -6,6 +6,7 @@
 // forma actual con ECMAScript 6 de llamar librerias
 import express from 'express'
 import bodyParser from 'body-parser'
+import client from './db.js'
 
 const app = express()
 const port = 3000
@@ -22,17 +23,37 @@ app.use(bodyParser.json())
 // - el callback recibe 2 parametros:
 // - req: request o la peticion
 // - res: response o la respuesta
-app.get('/api/v1/usuarios', (req, res) => {
+app.get('/api/v1/usuarios', async (req, res) => {
 
     console.log(req.query)
+
+//1 conectarnos a la base de datos
+await client.connect()
+
+// 2 seleccionar la base de datos que vamos a utilizar
+const dbSampleMflix = client.db("sample_mflix")
+
+//3 seleccionar la coleccion
+const userCollection = dbSampleMflix.collection("users")
+
+// 4 hacer la consulta (query)obtener insertar modificar datos
+
+const userList = await userCollection.find({}).toArray()
+
+console.log(userList)
+await client.close()
+console.log(userList)
+
+
     // const respuesta = {
-    //     mensaje: "hola"
+    //     mensajne: "hola"
     // }
 
     // res.json(respuesta)
 
     res.json({
         mensaje: 'lista de usuarios',
+        data: userList 
     })
 })
 
@@ -47,8 +68,31 @@ app.get('/api/v1/usuarios/:cedula', (req, res) => {
 })
 
 // post: crear datos
-app.post('/api/v1/usuarios', (req, res) => {
+app.post('/api/v1/usuarios', async (req, res) => {
 
+    const userData = req.body
+//1 conectarnos a la base de datos
+await client.connect()
+
+// 2 seleccionar la base de datos que vamos a utilizar
+const dbSampleMflix = client.db("sample_mflix")
+
+//3 seleccionar la coleccion
+const userCollection = dbSampleMflix.collection("users")
+
+// 4 hacer la consulta (query)obtener insertar modificar datos
+
+const userList = await userCollection.find({}).toArray()
+
+await userCollection.insertOne({
+     nombre: userData.nombre,
+     apellido: userData.apellido,
+     email: userData.email,
+     edad: userData.edad
+     
+
+
+})
     res.json({
         mensaje: 'usuario guardado'
     })
